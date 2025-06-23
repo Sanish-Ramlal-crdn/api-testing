@@ -47,6 +47,9 @@ test("POST login request", async ({ request }) => {
     // Status code should be 200 (OK)
     expect(res.status()).toBe(200);
 
+    const responseBody = await res.json();
+    console.log(responseBody);
+
     console.log("User logged in successfully! - Test passed");
 
     // Test should take less than 2 seconds for optimal performance
