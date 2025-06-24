@@ -33,6 +33,7 @@ test("GET products request", async ({ request }) => {
 test("GET products by id request", async ({ request }) => {
   // Getting the product ID as it is not fixed and can change with each test run
   const productId = await getProductId(request, path);
+  console.log(productId);
 
   const startTime = performance.now();
   let res;

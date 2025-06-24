@@ -1,17 +1,20 @@
 import { test, expect } from "@playwright/test";
 import user from "../fixtures/user.json";
+import token from "../fixtures/token.json";
+import fs from "fs";
+import path from "path";
 import { checkResponseTime } from "../utils.ts";
-const path = "https://api.practicesoftwaretesting.com/users";
+const url = "https://api.practicesoftwaretesting.com/users";
 
 test("POST register request", async ({ request }) => {
   // API POST call for user registration
   const startTime = performance.now();
   let res;
   try {
-    res = await request.post(`${path}/register`, { data: user });
+    res = await request.post(`${url}/register`, { data: user });
     const endTime = performance.now();
 
-    // Status code should be either 201 (created) or 422 (unprocessable entity)
+    // Status code should be either 201 (created) or 422 (unprocessable entity in case of usr already existing)
     expect([201, 422]).toContain(res.status());
 
     if (res.status() === 201) {
@@ -31,14 +34,13 @@ test("POST register request", async ({ request }) => {
   }
 });
 
-test("POST login request", async ({ request }) => {
+test.only("POST login request", async ({ request }) => {
   //API POST call for login
   const startTime = performance.now();
   let res;
   try {
-    res = await request.post(`${path}/login`, { data: user });
+    res = await request.post(`${url}/login`, { data: user });
     const endTime = performance.now();
-    const resTime = (endTime - startTime).toFixed(0);
 
     // Status code should be 200 (OK)
     expect(res.status()).toBe(200);
@@ -46,14 +48,20 @@ test("POST login request", async ({ request }) => {
     const responseBody = await res.json();
     console.log(responseBody);
 
+    fs.writeFileSync(
+      path.resolve(__dirname, "../fixtures/token.json"),
+      JSON.stringify(
+        {
+          access_token: responseBody.access_token,
+        },
+        null,
+        2
+      )
+    );
     console.log("User logged in successfully! - Test passed");
 
     // Test should take less than 2 seconds for optimal performance
-    if (parseInt(resTime) >= 2000) {
-      console.log(`Responded above acceptable time with ${resTime} ms`);
-    } else {
-      console.log(`Responded within acceptable time with ${resTime} ms`);
-    }
+    checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
       const responseBody = await res.json();
