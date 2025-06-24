@@ -1,18 +1,12 @@
 import { test, expect } from "@playwright/test";
-import { getProductId } from "./product.spec";
+import { getProductId, createCart, checkResponseTime } from "../utils.ts";
 
 const path = "https://api.practicesoftwaretesting.com/carts";
+const productPath = "https://api.practicesoftwaretesting.com/products";
 
-async function createCart(request) {
-  const res = await request.post(`${path}`);
-  expect(res.status()).toBe(201);
-  const responseBody = await res.json();
-  return responseBody.id;
-}
-
-test("Add product to cart", async ({ request }) => {
-  const cartId = await createCart(request);
-  const productId = await getProductId(request);
+test("POST Add product to cart", async ({ request }) => {
+  const cartId = await createCart(request, path);
+  const productId = await getProductId(request, productPath);
 
   const startTime = performance.now();
   let res;
@@ -25,7 +19,6 @@ test("Add product to cart", async ({ request }) => {
     });
 
     const endTime = performance.now();
-    const resTime = (endTime - startTime).toFixed(0);
 
     // Status code should be 200 (OK)
     expect(res.status()).toBe(200);
@@ -34,11 +27,7 @@ test("Add product to cart", async ({ request }) => {
     );
 
     // Test should take less than 2 seconds for optimal performance
-    if (parseInt(resTime) >= 2000) {
-      console.log(`Responded above acceptable time with ${resTime} ms`);
-    } else {
-      console.log(`Responded within acceptable time with ${resTime} ms`);
-    }
+    checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
       const responseBody = await res.json();

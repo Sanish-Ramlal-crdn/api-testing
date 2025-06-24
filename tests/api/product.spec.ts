@@ -1,13 +1,7 @@
 import { test, expect } from "@playwright/test";
 import product from "../fixtures/products.json";
+import { getProductId, checkResponseTime } from "../utils.ts"; // Adjust the import path as necessary
 const path = "https://api.practicesoftwaretesting.com/products";
-
-export async function getProductId(request) {
-  const res = await request.get(`${path}?page=1`);
-  expect(res.status()).toBe(200);
-  const responseBody = await res.json();
-  return responseBody.data[product.position].id;
-}
 
 test("GET products request", async ({ request }) => {
   // API GET call to fetch products
@@ -16,7 +10,6 @@ test("GET products request", async ({ request }) => {
   try {
     res = await request.get(`${path}?page=1`);
     const endTime = performance.now();
-    const resTime = (endTime - startTime).toFixed(0);
 
     // Status code should be 200 (OK)
     expect(res.status()).toBe(200);
@@ -27,11 +20,7 @@ test("GET products request", async ({ request }) => {
     );
 
     // Test should take less than 2 seconds for optimal performance
-    if (parseInt(resTime) >= 2000) {
-      console.log(`Responded above acceptable time with ${resTime} ms`);
-    } else {
-      console.log(`Responded within acceptable time with ${resTime} ms`);
-    }
+    checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
       const responseBody = await res.json();
@@ -43,24 +32,19 @@ test("GET products request", async ({ request }) => {
 
 test("GET products by id request", async ({ request }) => {
   // Getting the product ID as it is not fixed and can change with each test run
-  const productId = await getProductId(request);
+  const productId = await getProductId(request, path);
 
   const startTime = performance.now();
   let res;
   try {
     res = await request.get(`${path}/${productId}`);
     const endTime = performance.now();
-    const resTime = (endTime - startTime).toFixed(0);
     const responseBody = await res.json();
 
     expect(res.status()).toBe(200);
     console.log(`${responseBody.name} found successfully - Test Passed`);
 
-    if (parseInt(resTime) >= 2000) {
-      console.log(`Responded above acceptable time with ${resTime} ms`);
-    } else {
-      console.log(`Responded within acceptable time with ${resTime} ms`);
-    }
+    checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
       const responseBody = await res.json();
@@ -77,7 +61,6 @@ test("GET search products request", async ({ request }) => {
   try {
     res = await request.get(`${path}/search?q=${product.name}`);
     const endTime = performance.now();
-    const resTime = (endTime - startTime).toFixed(0);
 
     // Status code should be 200 (OK)
     expect(res.status()).toBe(200);
@@ -93,11 +76,7 @@ test("GET search products request", async ({ request }) => {
     }
 
     // Test should take less than 2 seconds for optimal performance
-    if (parseInt(resTime) >= 2000) {
-      console.log(`Responded above acceptable time with ${resTime} ms`);
-    } else {
-      console.log(`Responded within acceptable time with ${resTime} ms`);
-    }
+    checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
       const responseBody = await res.json();

@@ -10,8 +10,6 @@
 
 The goal of this assignment is to Use the public API endpoints from the Practice Software Testing GitHub repo (https://github.com/testsmith-io/practice-software-testing) to perform automated API testing using Playwright
 
-## Key Features
-
 ## API Test Scenarios
 
 The following scenarios have been tested:
@@ -31,6 +29,30 @@ The following scenarios have been tested:
    - Get product by ID (GET /products/:id)
 
    - Search for a Product
+
+3. **Cart Operations**
+
+   - Add item to cart (POST /cart)
+
+   - Get cart (GET /cart)
+
+   - Remove item from cart (DELETE /cart/:itemId)
+
+4. **Order Processing**
+
+   - Place an order (POST /orders)
+
+   - Get order history (GET /orders)
+
+   - Get order by ID (GET /orders/:id)
+
+5. **Negative Testing**
+
+   - Send invalid login credentials
+
+   - Access a protected endpoint with an invalid or missing token
+
+   - Try ordering with an empty cart
 
 ## How to Run
 

@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import user from "../fixtures/user.json";
+import { checkResponseTime } from "../utils.ts";
 const path = "https://api.practicesoftwaretesting.com/users";
 
 test("POST register request", async ({ request }) => {
@@ -9,7 +10,6 @@ test("POST register request", async ({ request }) => {
   try {
     res = await request.post(`${path}/register`, { data: user });
     const endTime = performance.now();
-    const resTime = (endTime - startTime).toFixed(0);
 
     // Status code should be either 201 (created) or 422 (unprocessable entity)
     expect([201, 422]).toContain(res.status());
@@ -21,11 +21,7 @@ test("POST register request", async ({ request }) => {
     }
 
     // Test should take less than 2 seconds for optimal performance
-    if (parseInt(resTime) >= 2000) {
-      console.log(`Responded above acceptable time with ${resTime} ms`);
-    } else {
-      console.log(`Responded within acceptable time with ${resTime} ms`);
-    }
+    checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
       const responseBody = await res.json();
