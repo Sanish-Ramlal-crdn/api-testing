@@ -36,3 +36,27 @@ test("POST Add product to cart", async ({ request }) => {
     throw error;
   }
 });
+
+test.only("GET cart details", async ({ request }) => {
+  const cartId = await createCart(request, path);
+
+  const startTime = performance.now();
+  let res;
+  try {
+    res = await request.get(`${path}/${cartId}`);
+    const endTime = performance.now();
+
+    expect(res.status()).toBe(200);
+    console.log(
+      "Cart with id " + cartId + " fetched successfully - Test Passed"
+    );
+
+    checkResponseTime(startTime, endTime);
+  } catch (error) {
+    if (res) {
+      const responseBody = await res.json();
+      console.log("Error response:", responseBody, " - Test failed");
+    }
+    throw error;
+  }
+});
