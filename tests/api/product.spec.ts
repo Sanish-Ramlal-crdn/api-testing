@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import product from "../fixtures/products.json";
 const path = "https://api.practicesoftwaretesting.com/products";
 
-async function getProductId(request) {
+export async function getProductId(request) {
   const res = await request.get(`${path}?page=1`);
   expect(res.status()).toBe(200);
   const responseBody = await res.json();
