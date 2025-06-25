@@ -29,8 +29,6 @@ export async function createToken(request: any, page: any, loginUrl: string) {
   let res;
   let responseBody;
   res = await request.post(`${loginUrl}/register`, { data: user });
-  responseBody = await res.json();
-  console.log(responseBody);
   res = await request.post(`${loginUrl}/login`, {
     data: {
       email: user.email,
@@ -38,7 +36,6 @@ export async function createToken(request: any, page: any, loginUrl: string) {
     },
   });
   responseBody = await res.json();
-  console.log(responseBody);
 
   //Logging in the webiste to authenticate the token for the requests
   await page.goto("https://api.practicesoftwaretesting.com/api/documentation");
