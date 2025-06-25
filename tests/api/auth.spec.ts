@@ -1,14 +1,14 @@
 import { test, expect } from "@playwright/test";
 import user from "../fixtures/user.json";
 import { checkResponseTime } from "../utils.ts";
-const url = "https://api.practicesoftwaretesting.com/users";
+import urls from "../fixtures/url.json";
 
 test("POST register request", async ({ request }) => {
   // API POST call for user registration
   const startTime = performance.now();
   let res;
   try {
-    res = await request.post(`${url}/register`, { data: user });
+    res = await request.post(`${urls.auth_url}/register`, { data: user });
     const endTime = performance.now();
 
     // Status code should be either 201 (created) or 422 (unprocessable entity in case of usr already existing)
@@ -36,7 +36,7 @@ test("POST login request", async ({ request }) => {
   const startTime = performance.now();
   let res;
   try {
-    res = await request.post(`${url}/login`, { data: user });
+    res = await request.post(`${urls.auth_url}/login`, { data: user });
     const endTime = performance.now();
 
     // Status code should be 200 (OK)

@@ -1,17 +1,15 @@
 import { test, expect } from "@playwright/test";
 import { getProductId, createCart, checkResponseTime } from "../utils.ts";
-
-const path = "https://api.practicesoftwaretesting.com/carts";
-const productPath = "https://api.practicesoftwaretesting.com/products";
+import urls from "../fixtures/url.json";
 
 test("POST Add product to cart", async ({ request }) => {
-  const cartId = await createCart(request, path);
-  const productId = await getProductId(request, productPath);
+  const cartId = await createCart(request, urls.cart_url);
+  const productId = await getProductId(request, urls.products_url);
 
   const startTime = performance.now();
   let res;
   try {
-    res = await request.post(`${path}/${cartId}`, {
+    res = await request.post(`${urls.cart_url}/${cartId}`, {
       data: {
         product_id: productId,
         quantity: 1,
@@ -38,12 +36,12 @@ test("POST Add product to cart", async ({ request }) => {
 });
 
 test("GET cart details", async ({ request }) => {
-  const cartId = await createCart(request, path);
+  const cartId = await createCart(request, urls.cart_url);
 
   const startTime = performance.now();
   let res;
   try {
-    res = await request.get(`${path}/${cartId}`);
+    res = await request.get(`${urls.cart_url}/${cartId}`);
     const endTime = performance.now();
 
     expect(res.status()).toBe(200);
@@ -62,20 +60,21 @@ test("GET cart details", async ({ request }) => {
 });
 
 test("DELETE item from cart", async ({ request }) => {
-  const cartId = await createCart(request, path);
-  const productId = await getProductId(request, productPath);
+  const cartId = await createCart(request, urls.cart_url);
+  const productId = await getProductId(request, urls.products_url);
 
-  const startTime = performance.now();
   let res;
   try {
-    res = await request.post(`${path}/${cartId}`, {
+    res = await request.post(`${urls.cart_url}/${cartId}`, {
       data: {
         product_id: productId,
         quantity: 1,
       },
     });
     const startTime = performance.now();
-    res = await request.delete(`${path}/${cartId}/product/${productId}`);
+    res = await request.delete(
+      `${urls.cart_url}/${cartId}/product/${productId}`
+    );
     const endTime = performance.now();
 
     expect(res.status()).toBe(204);

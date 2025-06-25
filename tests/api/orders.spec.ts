@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/test";
-import user from "../fixtures/user.json";
 import invoice from "../fixtures/invoice.json";
 import {
   getProductId,
@@ -7,22 +6,20 @@ import {
   checkResponseTime,
   createToken,
 } from "../utils.ts";
+import urls from "../fixtures/url.json";
 
 const url = "https://api.practicesoftwaretesting.com/invoices";
-const loginUrl = "https://api.practicesoftwaretesting.com/users";
-const cartPath = "https://api.practicesoftwaretesting.com/carts";
-const productPath = "https://api.practicesoftwaretesting.com/products";
 
 test("POST order invoice request", async ({ request, page }) => {
-  const cartId = await createCart(request, cartPath);
-  const productId = await getProductId(request, productPath);
+  const cartId = await createCart(request, urls.cart_url);
+  const productId = await getProductId(request, urls.products_url);
 
   let res;
   page.pause();
   try {
-    const token = await createToken(request, page, loginUrl);
+    const token = await createToken(request, page, urls.auth_url);
     //Putting at least 1 item in the cart before creating an invoice
-    res = await request.post(`${cartPath}/${cartId}`, {
+    res = await request.post(`${urls.cart_url}/${cartId}`, {
       data: {
         product_id: productId,
         quantity: 1,
@@ -31,7 +28,7 @@ test("POST order invoice request", async ({ request, page }) => {
 
     invoice.cart_id = cartId;
     const startTime = performance.now();
-    res = await request.post(`${url}`, {
+    res = await request.post(`${urls.invoice_url}`, {
       data: invoice,
       headers: {
         Authorization: `Bearer ${token}`,
@@ -59,10 +56,10 @@ test("GET orders request", async ({ request, page }) => {
   let res;
   // API GET call to fetch orders
   try {
-    const token = await createToken(request, page, loginUrl);
+    const token = await createToken(request, page, urls.auth_url);
 
     const startTime = performance.now();
-    res = await request.get(`${url}?page=1`, {
+    res = await request.get(`${urls.invoice_url}?page=1`, {
       headers: {
         Authorization: `Bearer ${token}`,
         accept: "application/json",
@@ -96,9 +93,9 @@ test("GET orders by ID request", async ({ request, page }) => {
   let res;
 
   try {
-    const token = await createToken(request, page, loginUrl);
+    const token = await createToken(request, page, urls.auth_url);
 
-    res = await request.get(`${url}?page=1`, {
+    res = await request.get(`${urls.invoice_url}?page=1`, {
       headers: {
         Authorization: `Bearer ${token}`,
         accept: "application/json",
@@ -111,7 +108,7 @@ test("GET orders by ID request", async ({ request, page }) => {
 
     const startTime = performance.now();
 
-    res = await request.get(`${url}/${responseBody.data[0].id}`, {
+    res = await request.get(`${urls.invoice_url}/${responseBody.data[0].id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         accept: "application/json",
