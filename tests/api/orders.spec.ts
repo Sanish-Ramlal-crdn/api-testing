@@ -1,9 +1,6 @@
 import { test, expect } from "@playwright/test";
 import user from "../fixtures/user.json";
-import fs from "fs";
-import path from "path";
 import invoice from "../fixtures/invoice.json";
-import token from "../fixtures/token.json";
 import { getProductId, createCart, checkResponseTime } from "../utils.ts";
 
 const url = "https://api.practicesoftwaretesting.com/invoices";
@@ -21,16 +18,6 @@ test("POST order invoice request", async ({ request, page }) => {
     res = await request.post(`${loginUrl}/login`, { data: user });
     const responseBody = await res.json();
 
-    fs.writeFileSync(
-      path.resolve(__dirname, "../fixtures/token.json"),
-      JSON.stringify(
-        {
-          access_token: responseBody.access_token,
-        },
-        null,
-        2
-      )
-    );
     await page.goto(
       "https://api.practicesoftwaretesting.com/api/documentation"
     );
@@ -53,7 +40,7 @@ test("POST order invoice request", async ({ request, page }) => {
     res = await request.post(`${url}`, {
       data: invoice,
       headers: {
-        Authorization: `Bearer ${token.access_token}`,
+        Authorization: `Bearer ${responseBody.access_token}`,
         accept: "application/json",
       },
     });
@@ -82,16 +69,7 @@ test("GET orders request", async ({ request, page }) => {
     res = await request.post(`${loginUrl}/login`, { data: user });
     let responseBody = await res.json();
 
-    fs.writeFileSync(
-      path.resolve(__dirname, "../fixtures/token.json"),
-      JSON.stringify(
-        {
-          access_token: responseBody.access_token,
-        },
-        null,
-        2
-      )
-    );
+    //Logging in the webiste to authenticate the token for the requests
     await page.goto(
       "https://api.practicesoftwaretesting.com/api/documentation"
     );
@@ -134,22 +112,12 @@ test("GET orders request", async ({ request, page }) => {
 test("GET orders by ID request", async ({ request, page }) => {
   // API call to GET orders by ID
   let res;
-  const startTime = performance.now();
 
   try {
     res = await request.post(`${loginUrl}/login`, { data: user });
     let responseBody = await res.json();
+    const token = responseBody.access_token;
 
-    fs.writeFileSync(
-      path.resolve(__dirname, "../fixtures/token.json"),
-      JSON.stringify(
-        {
-          access_token: responseBody.access_token,
-        },
-        null,
-        2
-      )
-    );
     await page.goto(
       "https://api.practicesoftwaretesting.com/api/documentation"
     );
@@ -159,6 +127,7 @@ test("GET orders by ID request", async ({ request, page }) => {
       .getByRole("textbox", { name: "auth-bearer-value" })
       .fill(responseBody.access_token);
     await page.getByRole("button", { name: "Apply credentials" }).click();
+
     res = await request.get(`${url}?page=1`, {
       headers: {
         Authorization: `Bearer ${responseBody.access_token}`,
@@ -174,7 +143,7 @@ test("GET orders by ID request", async ({ request, page }) => {
 
     res = await request.get(`${url}/${responseBody.data[0].id}`, {
       headers: {
-        Authorization: `Bearer ${token.access_token}`,
+        Authorization: `Bearer ${token}`,
         accept: "application/json",
       },
     });

@@ -1,8 +1,5 @@
 import { test, expect } from "@playwright/test";
 import user from "../fixtures/user.json";
-import token from "../fixtures/token.json";
-import fs from "fs";
-import path from "path";
 import { checkResponseTime } from "../utils.ts";
 const url = "https://api.practicesoftwaretesting.com/users";
 
@@ -46,18 +43,6 @@ test("POST login request", async ({ request }) => {
     expect(res.status()).toBe(200);
 
     const responseBody = await res.json();
-    console.log(responseBody);
-
-    fs.writeFileSync(
-      path.resolve(__dirname, "../fixtures/token.json"),
-      JSON.stringify(
-        {
-          access_token: responseBody.access_token,
-        },
-        null,
-        2
-      )
-    );
     console.log("User logged in successfully! - Test passed");
 
     // Test should take less than 2 seconds for optimal performance
