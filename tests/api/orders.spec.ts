@@ -1,20 +1,45 @@
 import { test, expect } from "@playwright/test";
 import user from "../fixtures/user.json";
+import fs from "fs";
+import path from "path";
 import invoice from "../fixtures/invoice.json";
 import token from "../fixtures/token.json";
 import { getProductId, createCart, checkResponseTime } from "../utils.ts";
 
-const path = "https://api.practicesoftwaretesting.com/invoices";
+const url = "https://api.practicesoftwaretesting.com/invoices";
+const loginUrl = "https://api.practicesoftwaretesting.com/users";
 const cartPath = "https://api.practicesoftwaretesting.com/carts";
 const productPath = "https://api.practicesoftwaretesting.com/products";
 
-test("POST order invoice request", async ({ request }) => {
+test("POST order invoice request", async ({ request, page }) => {
   const cartId = await createCart(request, cartPath);
   const productId = await getProductId(request, productPath);
 
   let res;
+  page.pause();
   try {
-    res = await request.post(`${path}/login`, { data: user });
+    res = await request.post(`${loginUrl}/login`, { data: user });
+    const responseBody = await res.json();
+
+    fs.writeFileSync(
+      path.resolve(__dirname, "../fixtures/token.json"),
+      JSON.stringify(
+        {
+          access_token: responseBody.access_token,
+        },
+        null,
+        2
+      )
+    );
+    await page.goto(
+      "https://api.practicesoftwaretesting.com/api/documentation"
+    );
+    await page.getByRole("button", { name: "Authorize" }).click();
+    await page.getByRole("textbox", { name: "auth-bearer-value" }).click();
+    await page
+      .getByRole("textbox", { name: "auth-bearer-value" })
+      .fill(responseBody.access_token);
+    await page.getByRole("button", { name: "Apply credentials" }).click();
     //Putting at least 1 item in the cart before creating an invoice
     res = await request.post(`${cartPath}/${cartId}`, {
       data: {
@@ -25,7 +50,7 @@ test("POST order invoice request", async ({ request }) => {
 
     invoice.cart_id = cartId;
     const startTime = performance.now();
-    res = await request.post(`${path}`, {
+    res = await request.post(`${url}`, {
       data: invoice,
       headers: {
         Authorization: `Bearer ${token.access_token}`,
@@ -49,15 +74,37 @@ test("POST order invoice request", async ({ request }) => {
   }
 });
 
-test("GET orders request", async ({ request }) => {
+test("GET orders request", async ({ request, page }) => {
   // API GET call to fetch orders
   let res;
-  const startTime = performance.now();
 
   try {
-    res = await request.get(`${path}?page=1`, {
+    res = await request.post(`${loginUrl}/login`, { data: user });
+    let responseBody = await res.json();
+
+    fs.writeFileSync(
+      path.resolve(__dirname, "../fixtures/token.json"),
+      JSON.stringify(
+        {
+          access_token: responseBody.access_token,
+        },
+        null,
+        2
+      )
+    );
+    await page.goto(
+      "https://api.practicesoftwaretesting.com/api/documentation"
+    );
+    await page.getByRole("button", { name: "Authorize" }).click();
+    await page.getByRole("textbox", { name: "auth-bearer-value" }).click();
+    await page
+      .getByRole("textbox", { name: "auth-bearer-value" })
+      .fill(responseBody.access_token);
+    await page.getByRole("button", { name: "Apply credentials" }).click();
+    const startTime = performance.now();
+    res = await request.get(`${url}?page=1`, {
       headers: {
-        Authorization: `Bearer ${token.access_token}`,
+        Authorization: `Bearer ${responseBody.access_token}`,
         accept: "application/json",
       },
     });
@@ -65,7 +112,7 @@ test("GET orders request", async ({ request }) => {
 
     // Status code should be 200 (OK)
     expect(res.status()).toBe(200);
-    const responseBody = await res.json();
+    responseBody = await res.json();
     console.log(
       responseBody.total,
       "Orders fetched successfully! - Test passed"
@@ -84,26 +131,48 @@ test("GET orders request", async ({ request }) => {
   }
 });
 
-test("GET orders by ID request", async ({ request }) => {
+test("GET orders by ID request", async ({ request, page }) => {
   // API call to GET orders by ID
   let res;
   const startTime = performance.now();
 
   try {
-    res = await request.get(`${path}?page=1`, {
+    res = await request.post(`${loginUrl}/login`, { data: user });
+    let responseBody = await res.json();
+
+    fs.writeFileSync(
+      path.resolve(__dirname, "../fixtures/token.json"),
+      JSON.stringify(
+        {
+          access_token: responseBody.access_token,
+        },
+        null,
+        2
+      )
+    );
+    await page.goto(
+      "https://api.practicesoftwaretesting.com/api/documentation"
+    );
+    await page.getByRole("button", { name: "Authorize" }).click();
+    await page.getByRole("textbox", { name: "auth-bearer-value" }).click();
+    await page
+      .getByRole("textbox", { name: "auth-bearer-value" })
+      .fill(responseBody.access_token);
+    await page.getByRole("button", { name: "Apply credentials" }).click();
+    res = await request.get(`${url}?page=1`, {
       headers: {
-        Authorization: `Bearer ${token.access_token}`,
+        Authorization: `Bearer ${responseBody.access_token}`,
         accept: "application/json",
       },
     });
 
     // Status code should be 200 (OK)
     expect(res.status()).toBe(200);
-    const responseBody = await res.json();
+    responseBody = await res.json();
 
     const startTime = performance.now();
 
-    res = await request.get(`${path}/${responseBody.data[0].id}`, {
+    res = await request.get(`${url}/${responseBody.data[0].id}`, {
       headers: {
         Authorization: `Bearer ${token.access_token}`,
         accept: "application/json",

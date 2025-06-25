@@ -34,7 +34,7 @@ test("POST register request", async ({ request }) => {
   }
 });
 
-test.only("POST login request", async ({ request }) => {
+test("POST login request", async ({ request }) => {
   //API POST call for login
   const startTime = performance.now();
   let res;

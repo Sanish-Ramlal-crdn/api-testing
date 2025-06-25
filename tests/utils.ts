@@ -23,3 +23,5 @@ export function checkResponseTime(startTime: number, endTime: number) {
     console.log(`Responded within acceptable time with ${resTime} ms`);
   }
 }
+
+export function createToken(page) {}
