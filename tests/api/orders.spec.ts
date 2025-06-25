@@ -1,7 +1,12 @@
 import { test, expect } from "@playwright/test";
 import user from "../fixtures/user.json";
 import invoice from "../fixtures/invoice.json";
-import { getProductId, createCart, checkResponseTime } from "../utils.ts";
+import {
+  getProductId,
+  createCart,
+  checkResponseTime,
+  createToken,
+} from "../utils.ts";
 
 const url = "https://api.practicesoftwaretesting.com/invoices";
 const loginUrl = "https://api.practicesoftwaretesting.com/users";
@@ -15,18 +20,7 @@ test("POST order invoice request", async ({ request, page }) => {
   let res;
   page.pause();
   try {
-    res = await request.post(`${loginUrl}/login`, { data: user });
-    const responseBody = await res.json();
-
-    await page.goto(
-      "https://api.practicesoftwaretesting.com/api/documentation"
-    );
-    await page.getByRole("button", { name: "Authorize" }).click();
-    await page.getByRole("textbox", { name: "auth-bearer-value" }).click();
-    await page
-      .getByRole("textbox", { name: "auth-bearer-value" })
-      .fill(responseBody.access_token);
-    await page.getByRole("button", { name: "Apply credentials" }).click();
+    const token = await createToken(request, page, loginUrl);
     //Putting at least 1 item in the cart before creating an invoice
     res = await request.post(`${cartPath}/${cartId}`, {
       data: {
@@ -40,7 +34,7 @@ test("POST order invoice request", async ({ request, page }) => {
     res = await request.post(`${url}`, {
       data: invoice,
       headers: {
-        Authorization: `Bearer ${responseBody.access_token}`,
+        Authorization: `Bearer ${token}`,
         accept: "application/json",
       },
     });
@@ -62,27 +56,15 @@ test("POST order invoice request", async ({ request, page }) => {
 });
 
 test("GET orders request", async ({ request, page }) => {
-  // API GET call to fetch orders
   let res;
-
+  // API GET call to fetch orders
   try {
-    res = await request.post(`${loginUrl}/login`, { data: user });
-    let responseBody = await res.json();
+    const token = await createToken(request, page, loginUrl);
 
-    //Logging in the webiste to authenticate the token for the requests
-    await page.goto(
-      "https://api.practicesoftwaretesting.com/api/documentation"
-    );
-    await page.getByRole("button", { name: "Authorize" }).click();
-    await page.getByRole("textbox", { name: "auth-bearer-value" }).click();
-    await page
-      .getByRole("textbox", { name: "auth-bearer-value" })
-      .fill(responseBody.access_token);
-    await page.getByRole("button", { name: "Apply credentials" }).click();
     const startTime = performance.now();
     res = await request.get(`${url}?page=1`, {
       headers: {
-        Authorization: `Bearer ${responseBody.access_token}`,
+        Authorization: `Bearer ${token}`,
         accept: "application/json",
       },
     });
@@ -90,7 +72,7 @@ test("GET orders request", async ({ request, page }) => {
 
     // Status code should be 200 (OK)
     expect(res.status()).toBe(200);
-    responseBody = await res.json();
+    const responseBody = await res.json();
     console.log(
       responseBody.total,
       "Orders fetched successfully! - Test passed"
@@ -114,30 +96,18 @@ test("GET orders by ID request", async ({ request, page }) => {
   let res;
 
   try {
-    res = await request.post(`${loginUrl}/login`, { data: user });
-    let responseBody = await res.json();
-    const token = responseBody.access_token;
-
-    await page.goto(
-      "https://api.practicesoftwaretesting.com/api/documentation"
-    );
-    await page.getByRole("button", { name: "Authorize" }).click();
-    await page.getByRole("textbox", { name: "auth-bearer-value" }).click();
-    await page
-      .getByRole("textbox", { name: "auth-bearer-value" })
-      .fill(responseBody.access_token);
-    await page.getByRole("button", { name: "Apply credentials" }).click();
+    const token = await createToken(request, page, loginUrl);
 
     res = await request.get(`${url}?page=1`, {
       headers: {
-        Authorization: `Bearer ${responseBody.access_token}`,
+        Authorization: `Bearer ${token}`,
         accept: "application/json",
       },
     });
 
     // Status code should be 200 (OK)
     expect(res.status()).toBe(200);
-    responseBody = await res.json();
+    let responseBody = await res.json();
 
     const startTime = performance.now();
 

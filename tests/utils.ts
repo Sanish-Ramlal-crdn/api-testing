@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import user from "./fixtures/user.json";
 import product from "./fixtures/products.json";
 
 export async function getProductId(request, path: string) {
@@ -24,4 +25,17 @@ export function checkResponseTime(startTime: number, endTime: number) {
   }
 }
 
-export function createToken(page) {}
+export async function createToken(request: any, page: any, loginUrl: string) {
+  const res = await request.post(`${loginUrl}/login`, { data: user });
+  let responseBody = await res.json();
+
+  //Logging in the webiste to authenticate the token for the requests
+  await page.goto("https://api.practicesoftwaretesting.com/api/documentation");
+  await page.getByRole("button", { name: "Authorize" }).click();
+  await page.getByRole("textbox", { name: "auth-bearer-value" }).click();
+  await page
+    .getByRole("textbox", { name: "auth-bearer-value" })
+    .fill(responseBody.access_token);
+  await page.getByRole("button", { name: "Apply credentials" }).click();
+  return responseBody.access_token;
+}
