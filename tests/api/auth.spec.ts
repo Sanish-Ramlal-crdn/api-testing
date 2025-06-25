@@ -36,7 +36,12 @@ test("POST login request", async ({ request }) => {
   const startTime = performance.now();
   let res;
   try {
-    res = await request.post(`${urls.auth_url}/login`, { data: user });
+    res = await request.post(`${urls.auth_url}/login`, {
+      data: {
+        email: user.email,
+        password: user.password,
+      },
+    });
     const endTime = performance.now();
 
     // Status code should be 200 (OK)

@@ -8,14 +8,11 @@ import {
 } from "../utils.ts";
 import urls from "../fixtures/url.json";
 
-const url = "https://api.practicesoftwaretesting.com/invoices";
-
 test("POST order invoice request", async ({ request, page }) => {
   const cartId = await createCart(request, urls.cart_url);
   const productId = await getProductId(request, urls.products_url);
 
   let res;
-  page.pause();
   try {
     const token = await createToken(request, page, urls.auth_url);
     //Putting at least 1 item in the cart before creating an invoice
@@ -40,6 +37,43 @@ test("POST order invoice request", async ({ request, page }) => {
     // Status code should be 200 (OK)
     expect(res.status()).toBe(201);
     console.log("Order passed successfully! - Test passed");
+
+    // Test should take less than 2 seconds for optimal performance
+    checkResponseTime(startTime, endTime);
+  } catch (error) {
+    if (res) {
+      const responseBody = await res.json();
+      console.log("Error response:", responseBody, " - Test failed");
+    }
+    throw error;
+  }
+});
+
+test("POST order invoice request with an empty cart", async ({
+  request,
+  page,
+}) => {
+  const cartId = await createCart(request, urls.cart_url);
+
+  let res;
+  page.pause();
+  try {
+    const token = await createToken(request, page, urls.auth_url);
+    //Leaving the cart empty before creating an invoice
+    invoice.cart_id = cartId;
+    const startTime = performance.now();
+    res = await request.post(`${urls.invoice_url}`, {
+      data: invoice,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        accept: "application/json",
+      },
+    });
+    const endTime = performance.now();
+
+    // Status code should be 200 (OK)
+    expect(res.status()).toBe(201);
+    console.log("Cart is empty! - Test passed");
 
     // Test should take less than 2 seconds for optimal performance
     checkResponseTime(startTime, endTime);
@@ -88,10 +122,7 @@ test("GET orders request", async ({ request, page }) => {
   }
 });
 
-test.only("GET orders request with missing token", async ({
-  request,
-  page,
-}) => {
+test("GET orders request with missing token", async ({ request }) => {
   let res;
   // API GET call to fetch orders
   try {
