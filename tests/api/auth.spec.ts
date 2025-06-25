@@ -55,3 +55,29 @@ test("POST login request", async ({ request }) => {
     throw error;
   }
 });
+
+test("POST invalid login request", async ({ request }) => {
+  //API POST call for  invalid login
+  const startTime = performance.now();
+  user.password = "wrongpassword"; // Intentionally using wrong password
+  let res;
+  try {
+    res = await request.post(`${urls.auth_url}/login`, { data: user });
+    const endTime = performance.now();
+
+    // Status code should be 401 (Unauthorized)
+    expect(res.status()).toBe(401);
+
+    const responseBody = await res.json();
+    console.log("User log in invalid! - Test passed");
+
+    // Test should take less than 2 seconds for optimal performance
+    checkResponseTime(startTime, endTime);
+  } catch (error) {
+    if (res) {
+      const responseBody = await res.json();
+      console.log("Error response:", responseBody, " - Test failed");
+    }
+    throw error;
+  }
+});

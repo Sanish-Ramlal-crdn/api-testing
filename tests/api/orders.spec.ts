@@ -88,6 +88,33 @@ test("GET orders request", async ({ request, page }) => {
   }
 });
 
+test.only("GET orders request with missing token", async ({
+  request,
+  page,
+}) => {
+  let res;
+  // API GET call to fetch orders
+  try {
+    const startTime = performance.now();
+    res = await request.get(`${urls.invoice_url}?page=1`);
+    const endTime = performance.now();
+
+    // Status code should be 401 (Unauthorized)
+    expect(res.status()).toBe(401);
+
+    console.log("Request made with missing token! - Test passed");
+
+    // Test should take less than 2 seconds for optimal performance
+    checkResponseTime(startTime, endTime);
+  } catch (error) {
+    if (res) {
+      const responseBody = await res.json();
+      console.log("Error response:", responseBody, " - Test failed");
+    }
+    throw error;
+  }
+});
+
 test("GET orders by ID request", async ({ request, page }) => {
   // API call to GET orders by ID
   let res;
