@@ -40,7 +40,7 @@ test("POST order invoice request", async ({ request, page }) => {
     });
     const endTime = performance.now();
 
-    // Status code should be 200 (OK)
+    // Status code should be 201
     expect(res.status()).toBe(201);
     console.log("Order passed successfully! - Test passed");
 

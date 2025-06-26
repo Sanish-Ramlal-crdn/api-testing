@@ -2,8 +2,6 @@ import { test, expect } from "@playwright/test";
 import user from "../fixtures/user.json";
 import { checkResponseTime, saveToken } from "../utils.ts";
 import urls from "../fixtures/url.json";
-import fs from "fs";
-import path from "path";
 
 test("POST register request", async ({ request }) => {
   // API POST call for user registration
