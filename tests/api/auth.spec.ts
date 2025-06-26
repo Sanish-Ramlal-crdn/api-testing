@@ -6,8 +6,9 @@ import urls from "../fixtures/url.json";
 test("POST register request", async ({ request }) => {
   // API POST call for user registration
   let res;
-  const startTime = performance.now();
+
   try {
+    const startTime = performance.now();
     res = await request.post(`${urls.auth_url}/register`, { data: user });
     const endTime = performance.now();
 

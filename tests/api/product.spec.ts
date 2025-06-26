@@ -55,7 +55,7 @@ test("GET products by id request", async ({ request }) => {
 });
 
 test("GET search products request", async ({ request }) => {
-  // API GET call to fetch products
+  // API GET call to search products
   const startTime = performance.now();
   let res;
   try {

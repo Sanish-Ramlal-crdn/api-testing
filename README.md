@@ -58,7 +58,7 @@ The following scenarios have been tested:
 Install Node and npm from
 https://nodejs.org/en/download/
 
-Ensure that typescript is installed on your machine
+Ensure that typescript is installed on your machine, in case you want to make any modification to the code
 
 ```javascript
 npm install -g typescript
@@ -85,7 +85,7 @@ npx playwright test --workers 1
 Or you can choose which test file to run
 
 ```javascript
-npx playwright test ./tests/api/[file_name].spec.ts
+npx playwright test ./tests/api/[file_name]
 ```
 
 You can also select the browser on which to run the tests, else it will run on all 3 browsers by default. For example
