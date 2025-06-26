@@ -8,26 +8,13 @@ import {
   createToken,
 } from "../utils.ts";
 import urls from "../fixtures/url.json";
-import fs from "fs";
-import path from "path";
 let token: string;
-
-// function getValidToken() {
-//   const tokenPath = path.resolve(__dirname, "../fixtures/token.json");
-//   if (!fs.existsSync(tokenPath)) return null;
-//   const { access_token, expires_at } = JSON.parse(
-//     fs.readFileSync(tokenPath, "utf-8")
-//   );
-//   if (!access_token || !expires_at) return null;
-//   if (new Date() >= new Date(expires_at)) return null;
-//   return access_token;
-// }
 
 test("POST order invoice request", async ({ request, page }) => {
   const cartId = await createCart(request, urls.cart_url);
   const productId = await getProductId(request, urls.products_url);
 
-  let res;
+  let res: any;
   try {
     token = getValidToken();
     if (!token) {
@@ -74,9 +61,10 @@ test("POST order invoice request with an empty cart", async ({
 }) => {
   const cartId = await createCart(request, urls.cart_url);
 
-  let res;
+  let res: any;
   page.pause();
   try {
+    token = getValidToken();
     if (!token) {
       token = await createToken(request, page, urls.auth_url);
     }
@@ -108,9 +96,10 @@ test("POST order invoice request with an empty cart", async ({
 });
 
 test("GET orders request", async ({ request, page }) => {
-  let res;
+  let res: any;
   // API GET call to fetch orders
   try {
+    token = getValidToken();
     if (!token) {
       token = await createToken(request, page, urls.auth_url);
     }
@@ -146,7 +135,7 @@ test("GET orders request", async ({ request, page }) => {
 });
 
 test("GET orders request with missing token", async ({ request }) => {
-  let res;
+  let res: any;
   // API GET call to fetch orders
   try {
     const startTime = performance.now();
@@ -171,9 +160,10 @@ test("GET orders request with missing token", async ({ request }) => {
 
 test("GET orders by ID request", async ({ request, page }) => {
   // API call to GET orders by ID
-  let res;
+  let res: any;
 
   try {
+    token = getValidToken();
     if (!token) {
       token = await createToken(request, page, urls.auth_url);
     }

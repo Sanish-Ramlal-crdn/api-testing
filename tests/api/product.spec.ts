@@ -1,14 +1,14 @@
 import { test, expect } from "@playwright/test";
 import product from "../fixtures/products.json";
 import { getProductId, checkResponseTime } from "../utils.ts"; // Adjust the import path as necessary
-const path = "https://api.practicesoftwaretesting.com/products";
+import urls from "../fixtures/url.json";
 
 test("GET products request", async ({ request }) => {
   // API GET call to fetch products
   const startTime = performance.now();
   let res;
   try {
-    res = await request.get(`${path}?page=1`);
+    res = await request.get(`${urls.products_url}?page=1`);
     const endTime = performance.now();
 
     // Status code should be 200 (OK)
@@ -32,13 +32,12 @@ test("GET products request", async ({ request }) => {
 
 test("GET products by id request", async ({ request }) => {
   // Getting the product ID as it is not fixed and can change with each test run
-  const productId = await getProductId(request, path);
-  console.log(productId);
+  const productId = await getProductId(request, urls.products_url);
 
   const startTime = performance.now();
   let res;
   try {
-    res = await request.get(`${path}/${productId}`);
+    res = await request.get(`${urls.products_url}/${productId}`);
     const endTime = performance.now();
     const responseBody = await res.json();
 
@@ -60,7 +59,7 @@ test("GET search products request", async ({ request }) => {
   const startTime = performance.now();
   let res;
   try {
-    res = await request.get(`${path}/search?q=${product.name}`);
+    res = await request.get(`${urls.products_url}/search?q=${product.name}`);
     const endTime = performance.now();
 
     // Status code should be 200 (OK)

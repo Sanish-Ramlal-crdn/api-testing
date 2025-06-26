@@ -27,6 +27,27 @@ export function checkResponseTime(startTime: number, endTime: number) {
   }
 }
 
+export function saveToken(responseBody: any) {
+  const expiresAt = new Date(
+    Date.now() + responseBody.expires_in * 1000
+  ).toISOString();
+  const tokenPath = path.resolve(__dirname, "./fixtures/token.json");
+  fs.writeFileSync(
+    tokenPath,
+    JSON.stringify(
+      {
+        access_token: responseBody.access_token,
+        expires_in: responseBody.expires_in,
+        expires_at: expiresAt,
+        email: user.email,
+      },
+      null,
+      2
+    )
+  );
+  console.log("Access token and expiry saved to token.json");
+}
+
 export async function createToken(request: any, page: any, loginUrl: string) {
   let res: any;
   let responseBody: any;
@@ -38,6 +59,8 @@ export async function createToken(request: any, page: any, loginUrl: string) {
     },
   });
   responseBody = await res.json();
+
+  saveToken(responseBody);
 
   //Opening the the actual webiste to authenticate the token for the requests
   await page.goto("https://api.practicesoftwaretesting.com/api/documentation");
@@ -52,12 +75,16 @@ export async function createToken(request: any, page: any, loginUrl: string) {
 
 export function getValidToken() {
   const tokenPath = path.resolve(__dirname, "./fixtures/token.json");
+  //If the token file does not exist,  return null
   if (!fs.existsSync(tokenPath)) return null;
   const { access_token, expires_at, email } = JSON.parse(
     fs.readFileSync(tokenPath, "utf-8")
   );
+  //Checking if any of the required fields are missing
   if (!access_token || !expires_at || !email) return null;
+  // Checking  if the token is expired
   if (new Date() >= new Date(expires_at)) return null;
+  // Checking  if the token corresponds to the current user
   if (email !== user.email) return null;
   return access_token;
 }
