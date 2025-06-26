@@ -85,7 +85,7 @@ npx playwright test --workers 1
 Or you can choose which test file to run
 
 ```javascript
-npx playwright test ./tests/ui/[test_file_name].spec.ts
+npx playwright test ./tests/api/[file_name].spec.ts
 ```
 
 You can also select the browser on which to run the tests, else it will run on all 3 browsers by default. For example
