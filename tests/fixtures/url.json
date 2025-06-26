@@ -2,5 +2,6 @@
     "auth_url": "https://api.practicesoftwaretesting.com/users",
     "cart_url": "https://api.practicesoftwaretesting.com/carts",
     "products_url": "https://api.practicesoftwaretesting.com/products",
-    "invoice_url": "https://api.practicesoftwaretesting.com/invoices"
+    "invoice_url": "https://api.practicesoftwaretesting.com/invoices",
+    "documentation_url": "https://api.practicesoftwaretesting.com/api/documentation"
 }

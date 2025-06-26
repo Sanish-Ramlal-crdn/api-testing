@@ -16,6 +16,7 @@ test("POST order invoice request", async ({ request, page }) => {
 
   let res: any;
   try {
+    //Checking if the token is valid, if not creating a new one
     token = getValidToken();
     if (!token) {
       token = await createToken(request, page, urls.auth_url);
@@ -44,7 +45,7 @@ test("POST order invoice request", async ({ request, page }) => {
     expect(res.status()).toBe(201);
     console.log("Order passed successfully! - Test passed");
 
-    // Test should take less than 2 seconds for optimal performance
+    // Response should take less than 2 seconds for optimal performance
     checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
@@ -80,11 +81,11 @@ test("POST order invoice request with an empty cart", async ({
     });
     const endTime = performance.now();
 
-    // Status code should be 200 (OK)
+    // Status code should be 201
     expect(res.status()).toBe(201);
     console.log("Cart is empty! - Test passed");
 
-    // Test should take less than 2 seconds for optimal performance
+    // Response should take less than 2 seconds for optimal performance
     checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
@@ -123,7 +124,7 @@ test("GET orders request", async ({ request, page }) => {
 
     console.log(responseBody);
 
-    // Test should take less than 2 seconds for optimal performance
+    // Response should take less than 2 seconds for optimal performance
     checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
@@ -147,7 +148,7 @@ test("GET orders request with missing token", async ({ request }) => {
 
     console.log("Request made with missing token! - Test passed");
 
-    // Test should take less than 2 seconds for optimal performance
+    // Response should take less than 2 seconds for optimal performance
     checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
@@ -192,7 +193,7 @@ test("GET orders by ID request", async ({ request, page }) => {
     console.log(
       `Order ${responseBody.data[0].id} found successfully - Test Passed`
     );
-    // Test should take less than 2 seconds for optimal performance
+    // Response should take less than 2 seconds for optimal performance
     checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {

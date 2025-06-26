@@ -3,15 +3,16 @@ import user from "./fixtures/user.json";
 import product from "./fixtures/products.json";
 import fs from "fs";
 import path from "path";
+import urls from "./fixtures/url.json";
 
-export async function getProductId(request, path: string) {
+export async function getProductId(request: any, path: string) {
   const res = await request.get(`${path}?page=1`);
   expect(res.status()).toBe(200);
   const responseBody = await res.json();
   return responseBody.data[product.position].id;
 }
 
-export async function createCart(request, path: string) {
+export async function createCart(request: any, path: string) {
   const res = await request.post(`${path}`);
   expect(res.status()).toBe(201);
   const responseBody = await res.json();
@@ -28,6 +29,7 @@ export function checkResponseTime(startTime: number, endTime: number) {
 }
 
 export function saveToken(responseBody: any) {
+  //Getting expiry date of the token
   const expiresAt = new Date(
     Date.now() + responseBody.expires_in * 1000
   ).toISOString();
@@ -51,6 +53,7 @@ export function saveToken(responseBody: any) {
 export async function createToken(request: any, page: any, loginUrl: string) {
   let res: any;
   let responseBody: any;
+  //Registering again in case the credentials are not stored
   res = await request.post(`${loginUrl}/register`, { data: user });
   res = await request.post(`${loginUrl}/login`, {
     data: {
@@ -63,7 +66,8 @@ export async function createToken(request: any, page: any, loginUrl: string) {
   saveToken(responseBody);
 
   //Opening the the actual webiste to authenticate the token for the requests
-  await page.goto("https://api.practicesoftwaretesting.com/api/documentation");
+  //Since manual insertion of the token is required to enable the  protected API calls
+  await page.goto(urls.documentation_url);
   await page.getByRole("button", { name: "Authorize" }).click();
   await page.getByRole("textbox", { name: "auth-bearer-value" }).click();
   await page

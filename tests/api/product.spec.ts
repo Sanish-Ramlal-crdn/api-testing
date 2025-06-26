@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import product from "../fixtures/products.json";
-import { getProductId, checkResponseTime } from "../utils.ts"; // Adjust the import path as necessary
+import { getProductId, checkResponseTime } from "../utils.ts";
 import urls from "../fixtures/url.json";
 
 test("GET products request", async ({ request }) => {

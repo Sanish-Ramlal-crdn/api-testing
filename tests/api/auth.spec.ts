@@ -5,8 +5,8 @@ import urls from "../fixtures/url.json";
 
 test("POST register request", async ({ request }) => {
   // API POST call for user registration
-  const startTime = performance.now();
   let res;
+  const startTime = performance.now();
   try {
     res = await request.post(`${urls.auth_url}/register`, { data: user });
     const endTime = performance.now();
@@ -20,7 +20,7 @@ test("POST register request", async ({ request }) => {
       console.log("User already registered - Test passed");
     }
 
-    // Test should take less than 2 seconds for optimal performance
+    // Response should take less than 2 seconds for optimal performance
     checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
@@ -33,8 +33,8 @@ test("POST register request", async ({ request }) => {
 
 test("POST login request", async ({ request }) => {
   //API POST call for login
-  const startTime = performance.now();
   let res;
+  const startTime = performance.now();
   try {
     res = await request.post(`${urls.auth_url}/login`, {
       data: {
@@ -50,11 +50,12 @@ test("POST login request", async ({ request }) => {
     const responseBody = await res.json();
     console.log("User logged in successfully! - Test passed");
 
+    //Saving the access token for future requests
     if (responseBody.access_token && responseBody.expires_in) {
       saveToken(responseBody);
     }
 
-    // Test should take less than 2 seconds for optimal performance
+    // Response should take less than 2 seconds for optimal performance
     checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
@@ -67,11 +68,16 @@ test("POST login request", async ({ request }) => {
 
 test("POST invalid login request", async ({ request }) => {
   //API POST call for  invalid login
-  const startTime = performance.now();
   user.password = "wrongpassword"; // Intentionally using wrong password
   let res;
+  const startTime = performance.now();
   try {
-    res = await request.post(`${urls.auth_url}/login`, { data: user });
+    res = await request.post(`${urls.auth_url}/login`, {
+      data: {
+        email: user.email,
+        password: user.password,
+      },
+    });
     const endTime = performance.now();
 
     // Status code should be 401 (Unauthorized)
@@ -79,7 +85,7 @@ test("POST invalid login request", async ({ request }) => {
 
     console.log("User log in invalid! - Test passed");
 
-    // Test should take less than 2 seconds for optimal performance
+    // Response should take less than 2 seconds for optimal performance
     checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {

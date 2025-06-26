@@ -24,7 +24,7 @@ test("POST Add product to cart", async ({ request }) => {
       "Product added successfully to cart with ID " + cartId + "! - Test passed"
     );
 
-    // Test should take less than 2 seconds for optimal performance
+    // Response should take less than 2 seconds for optimal performance
     checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
@@ -49,6 +49,7 @@ test("GET cart details", async ({ request }) => {
       "Cart with id " + cartId + " fetched successfully - Test Passed"
     );
 
+    // Response should take less than 2 seconds for optimal performance
     checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
@@ -85,6 +86,8 @@ test("DELETE item from cart", async ({ request }) => {
         cartId +
         " - Test Passed"
     );
+
+    // Response should take less than 2 seconds for optimal performance
     checkResponseTime(startTime, endTime);
   } catch (error) {
     if (res) {
