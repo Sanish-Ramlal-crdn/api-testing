@@ -67,7 +67,7 @@ npm install -g typescript
 Clone the repository
 
 ```javascript
-git clone https://github.com/Sanish-Ramlal-crdn/automation-project.git
+git clone https://github.com/Sanish-Ramlal-crdn/api-testing.git
 ```
 
 Once you have installed TypeScript, open the project and install Playwright if it's not already installed by running the below command in the project's root in the terminal
@@ -76,10 +76,10 @@ Once you have installed TypeScript, open the project and install Playwright if i
 npm init playwright@latest
 ```
 
-Now, you can run all the tests at once by typing this command on the terminal of your code editor
+Now, you can run all the tests (in order) at once by typing this command on the terminal of your code editor
 
 ```javascript
-npx playwright test
+npx playwright test --workers 1
 ```
 
 Or you can choose which test file to run
@@ -93,7 +93,7 @@ You can also select the browser on which to run the tests, else it will run on a
 Chromium
 
 ```javascript
-npx playwright test --project=chromium
+npx playwright test --project=chromium --workers 1
 ```
 
 And you can also choose to activate headed mode, as the deault mode is headless
