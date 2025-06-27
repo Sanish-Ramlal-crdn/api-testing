@@ -8,7 +8,7 @@ import {
   createToken,
 } from "../utils.ts";
 import urls from "../fixtures/url.json";
-let token: string;
+let token: string | null;
 
 test("POST order invoice request", async ({ request, page }) => {
   const cartId = await createCart(request, urls.cart_url);

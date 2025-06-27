@@ -28,7 +28,7 @@ export function checkResponseTime(startTime: number, endTime: number) {
   }
 }
 
-export function saveToken(responseBody: any) {
+export function saveToken(responseBody: any): void {
   //Getting expiry date of the token
   const expiresAt = new Date(
     Date.now() + responseBody.expires_in * 1000
@@ -77,7 +77,7 @@ export async function createToken(request: any, page: any, loginUrl: string) {
   return responseBody.access_token;
 }
 
-export function getValidToken() {
+export function getValidToken(): string | null {
   const tokenPath = path.resolve(__dirname, "./fixtures/token.json");
   //If the token file does not exist,  return null
   if (!fs.existsSync(tokenPath)) return null;
