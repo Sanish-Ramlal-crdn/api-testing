@@ -1,7 +1,7 @@
 ## Assignment 2: API Testing
 
 <p align="center"><a href="#project-description">Project Description</a> - 
-<a href="#ui-test-scenarios">API Test Scenarios</a> -
+<a href="#api-test-scenarios">API Test Scenarios</a> -
 <a href="#how-to-run">How To Run</a> 
 </p>
 
