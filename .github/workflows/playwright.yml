@@ -23,7 +23,7 @@ jobs:
       - name: Run Playwright tests
         id: playwright
         run: npx playwright test
-        continue-on-error: true # So we can always send notification
+        continue-on-error: true
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
@@ -36,10 +36,10 @@ jobs:
         if: always()
         run: |
           if [ "${{ job.status }}" == "success" ]; then
-            STATUS="✅ Success"
+            STATUS="✅ Run completed"
             COLOR="00FF00"
           else
-            STATUS="❌ Failed"
+            STATUS="❌ Run failed"
             COLOR="FF0000"
           fi
 
