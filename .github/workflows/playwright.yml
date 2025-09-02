@@ -6,6 +6,7 @@ on:
     branches: [main, master]
   schedule:
     - cron: "0 4 * * 1-5"
+
 jobs:
   test:
     timeout-minutes: 60
@@ -20,10 +21,45 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
+        id: playwright
         run: npx playwright test
+        continue-on-error: true # So we can always send notification
+
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+
+      - name: Send Teams Notification
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            STATUS="✅ Success"
+            COLOR="00FF00"
+          else
+            STATUS="❌ Failed"
+            COLOR="FF0000"
+          fi
+
+          curl -H 'Content-Type: application/json' \
+               -d "{
+                     \"@type\": \"MessageCard\",
+                     \"@context\": \"http://schema.org/extensions\",
+                     \"summary\": \"Playwright Test Result\",
+                     \"themeColor\": \"$COLOR\",
+                     \"title\": \"Playwright Tests - $STATUS\",
+                     \"sections\": [
+                         {
+                             \"activityTitle\": \"Repository: ${{ github.repository }}\",
+                             \"activitySubtitle\": \"Workflow: ${{ github.workflow }}\",
+                             \"facts\": [
+                                 {\"name\": \"Branch:\", \"value\": \"${{ github.ref }}\"},
+                                 {\"name\": \"Run Number:\", \"value\": \"${{ github.run_number }}\"},
+                                 {\"name\": \"Link:\", \"value\": \"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}
+                             ]
+                         }
+                     ]
+                   }" \
+               https://ceridian.webhook.office.com/webhookb2/e9e88394-671e-45de-b5ad-343427650f7d@289321e0-9db6-4644-b371-956e6056d9eb/IncomingWebhook/2f10adcd3bfc40eeb7f94a83417e24c5/7ee65dfb-0ac2-4d53-b998-b272b3e9f61e/V2g-Dn0pK9ZqsIn5s8YFZWREPcQXrXhA2K3fzb1SbslLc1
