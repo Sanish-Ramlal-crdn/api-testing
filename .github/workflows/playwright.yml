@@ -51,15 +51,17 @@ jobs:
                      \"themeColor\": \"$COLOR\",
                      \"title\": \"Playwright Tests - $STATUS\",
                      \"sections\": [
-                         {
-                             \"activityTitle\": \"Repository: ${{ github.repository }}\",
-                             \"activitySubtitle\": \"Workflow: ${{ github.workflow }}\",
-                             \"facts\": [
-                                 {\"name\": \"Branch:\", \"value\": \"${{ github.ref }}\"},
-                                 {\"name\": \"Run Number:\", \"value\": \"${{ github.run_number }}\"},
-                                 {\"name\": \"Link:\", \"value\": \"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}
-                             ]
-                         }
+                   {
+                       \"activityTitle\": \"GitHub Actions\",
+                       \"activitySubtitle\": \"Run by: ${{ github.actor }}\",
+                       \"activityImage\": \"https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png\",
+                       \"facts\": [
+                           {\"name\": \"Repository:\", \"value\": \"${{ github.repository }}\"},
+                           {\"name\": \"Branch:\", \"value\": \"${{ github.ref }}\"},
+                           {\"name\": \"Run:\", \"value\": \"${{ github.run_number }}\"},
+                           {\"name\": \"Link:\", \"value\": \"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}
+                       ]
+                   }
                      ]
                    }" \
                https://ceridian.webhook.office.com/webhookb2/e9e88394-671e-45de-b5ad-343427650f7d@289321e0-9db6-4644-b371-956e6056d9eb/IncomingWebhook/2f10adcd3bfc40eeb7f94a83417e24c5/7ee65dfb-0ac2-4d53-b998-b272b3e9f61e/V2g-Dn0pK9ZqsIn5s8YFZWREPcQXrXhA2K3fzb1SbslLc1
